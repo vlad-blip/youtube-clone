@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import "./globals.css";
+import Search from "@/modules/home/ui/nav-bar/search";
+import SideBar from "@/modules/home/ui/side-bar";
+import AuthButton from "@/modules/auth/ui/auth-button";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +32,27 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className="flex justify-between items-center px-4 py-2">
+          <Link href={"/"}>
+            <Image
+              src={"/logo.svg"}
+              alt="Youtube logo"
+              width={40}
+              height={40}
+            />
+          </Link>
+          <Search />
+          <div className="flex items-center gap-4">
+            <button className="rounded-full bg-neutral-600 py-2 px-4">
+              + Create
+            </button>
+            <AuthButton />
+          </div>
+        </div>
+        <div className="grid  grid-cols-[0.1fr_1fr]">
+          <SideBar />
+          {children}
+        </div>
       </body>
     </html>
   );
