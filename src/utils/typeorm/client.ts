@@ -9,7 +9,7 @@ import { Category } from "./entity/category.entity";
 export const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DATABASE_URL,
-  synchronize: process.env.NODE_ENV === "development", // ONLY use synchronize: true in development!
+  synchronize: process.env.NODE_ENV === "development",
   logging: process.env.NODE_ENV === "development",
   entities: [Video, Channel, Category],
   subscribers: [],
