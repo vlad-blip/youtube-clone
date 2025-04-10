@@ -1,7 +1,23 @@
+import { withNextVideo } from "next-video/process";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "100mb",
+    },
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "storage.googleapis.com",
+        port: "",
+        pathname: "/youtube-clone-videos/**",
+        search: "",
+      },
+    ],
+  },
 };
 
-export default nextConfig;
+export default withNextVideo(nextConfig);

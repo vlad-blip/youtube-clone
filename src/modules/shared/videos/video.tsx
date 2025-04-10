@@ -3,12 +3,13 @@ import { MoreVertical } from "lucide-react";
 import { type IVideo } from "./types";
 import Link from "next/link";
 
-export default function Video(props: IVideo) {
+export default function Video(props: IVideo & { className?: string }) {
   return (
     <Link href={`/watch/${props.id}`}>
-      <div>
+      <div className={props.className ?? ""}>
         <Image
-          src={"/logo.svg"}
+          className="h-60 object-cover"
+          src={props.thumbnail}
           alt={`${props.title} thumbnail`}
           width={450}
           height={250}
