@@ -28,7 +28,6 @@ export const getDataSource = async (): Promise<DataSource> => {
       return AppDataSource;
     } catch (error) {
       console.error("Error during TypeORM data source initialization:", error);
-      // Rethrow or handle error appropriately
       throw error;
     }
   }

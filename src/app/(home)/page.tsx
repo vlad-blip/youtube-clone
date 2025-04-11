@@ -43,9 +43,9 @@ export default async function Home({
       thumbnail: getPublicUrl(path),
       id: video.id,
       title: video.title,
-      views: "1312323",
+      views: video.view_count,
       duration: video.duration,
-      date: new Date(video.created_at).toLocaleString(),
+      date: new Date(video.created_at).toLocaleDateString(),
       channel: video.channel,
     };
   });

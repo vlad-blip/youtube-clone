@@ -46,6 +46,15 @@ export class Video {
   @Column()
   status: string;
 
+  @Column({ type: "int8", default: 0 })
+  like_count: number;
+
+  @Column({ type: "int8", default: 0 })
+  dislike_count: number;
+
+  @Column({ type: "int8", default: 0 })
+  view_count: number;
+
   @Column({ enum: ["video", "shorts"], nullable: true })
   type: "video" | "shorts";
 

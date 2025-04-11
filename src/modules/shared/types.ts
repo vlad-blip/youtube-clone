@@ -3,7 +3,7 @@ export interface IVideo {
   thumbnail: string;
   title: string;
   channel: {
-    name: string;
+    title: string;
     avatar: string;
   };
   views: string;
