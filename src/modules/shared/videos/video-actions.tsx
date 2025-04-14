@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Video } from "@/utils/typeorm/entity/video.entity";
+import { type Video } from "@/utils/typeorm/entity/video.entity";
 import Link from "next/link";
 import { Download, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useReducer } from "react";

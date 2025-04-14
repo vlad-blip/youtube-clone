@@ -33,6 +33,9 @@ export class Channel {
   @Column({ type: "int8", default: 0 })
   subscriber_count: number;
 
+  @Column()
+  description: string;
+
   @OneToMany(() => Video, (video) => video.channel)
   videos: Relation<Video[]>;
 }
