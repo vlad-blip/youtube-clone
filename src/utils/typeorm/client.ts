@@ -5,14 +5,20 @@ import { DataSource } from "typeorm";
 import { Video } from "./entity/video.entity";
 import { Channel } from "./entity/channel.entity";
 import { Category } from "./entity/category.entity";
+import { Reaction } from "./entity/reaction.entity";
+import { View } from "./entity/view.entity";
+
+import { ReactionSubscriber } from "./subscriber/reaction.subscriber";
+import { ViewSubscriber } from "./subscriber/view.subscriber";
+import { Subscription } from "./entity/subscription.entity";
+import { SubscriptionSubscriber } from "./subscriber/subscription.subscriber";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DATABASE_URL,
   synchronize: process.env.NODE_ENV === "development",
-  logging: process.env.NODE_ENV === "development",
-  entities: [Video, Channel, Category],
-  subscribers: [],
+  entities: [Video, Channel, Category, Reaction, View, Subscription],
+  subscribers: [ReactionSubscriber, ViewSubscriber, SubscriptionSubscriber],
   migrations: [],
 });
 

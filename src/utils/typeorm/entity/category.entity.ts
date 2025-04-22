@@ -1,22 +1,9 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Entity, Column } from "typeorm";
+
+import { Base } from "./_base.entity";
 
 @Entity()
-export class Category {
-  @PrimaryGeneratedColumn({ type: "int8" })
-  readonly id: number;
-
-  @CreateDateColumn()
-  readonly created_at: Date;
-
-  @UpdateDateColumn()
-  readonly updated_at: Date;
-
+export class Category extends Base {
   @Column()
   title: string;
 }

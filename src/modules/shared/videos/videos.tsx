@@ -2,16 +2,22 @@ import Video from "./video";
 
 import type { IVideo } from "../types";
 
-interface VideosProps {
-  items: IVideo[];
+enum VideoSize {
+  sm = "videos-sm",
+  md = "videos-md",
 }
 
-export default function Videos({ items }: VideosProps) {
+interface VideosProps {
+  items: IVideo[];
+  size: keyof typeof VideoSize;
+}
+
+export default function Videos({ items, size }: VideosProps) {
   return (
-    <ul className="grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-4 ">
+    <ul className={VideoSize[size]}>
       {items.map((item: IVideo) => (
         <li key={item.id}>
-          <Video {...item} className="flex flex-col gap-4" />
+          <Video {...item} className="flex flex-col gap-2 w-full rounded-xl" />
         </li>
       ))}
     </ul>

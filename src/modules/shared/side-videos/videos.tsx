@@ -3,10 +3,11 @@ import SideVideo from "./video";
 import type { IVideo } from "../types";
 
 interface VideosProps {
-  items: IVideo[];
+  itemsPromise: Promise<IVideo[]>;
 }
 
-export default function SideVideos({ items }: VideosProps) {
+export default async function SideVideos({ itemsPromise }: VideosProps) {
+  const items = await itemsPromise;
   return (
     <ul className="flex flex-col gap-4">
       {items.map((item: IVideo) => (

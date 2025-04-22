@@ -1,23 +1,25 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   ManyToOne,
   ManyToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
   type Relation,
   JoinTable,
+  OneToMany,
 } from "typeorm";
 
 import { Channel } from "./channel.entity";
 import { Category } from "./category.entity";
+import { Reaction } from "./reaction.entity";
+import { Base } from "./_base.entity";
+
+export enum VideoType {
+  VIDEO = "video",
+  SHORTS = "shorts",
+}
 
 @Entity()
-export class Video {
-  @PrimaryGeneratedColumn({ type: "int8" })
-  readonly id: number;
-
+export class Video extends Base {
   @Column()
   media_name: string;
 
@@ -46,21 +48,18 @@ export class Video {
   @Column()
   status: string;
 
-  @Column({ type: "int8", default: 0 })
+  @Column({ default: 0 })
   like_count: number;
 
-  @Column({ type: "int8", default: 0 })
+  @Column({ default: 0 })
   dislike_count: number;
 
-  @Column({ type: "int8", default: 0 })
+  @Column({ default: 0 })
   view_count: number;
 
-  @Column({ enum: ["video", "shorts"], nullable: true })
-  type: "video" | "shorts";
+  @Column({ enum: VideoType, nullable: true })
+  type: VideoType;
 
-  @CreateDateColumn()
-  readonly created_at: Date;
-
-  @UpdateDateColumn()
-  readonly updated_at: Date;
+  @OneToMany(() => Reaction, (reaction) => reaction.video, { nullable: true })
+  reactions: Relation<Reaction[]>;
 }

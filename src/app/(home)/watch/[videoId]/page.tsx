@@ -2,15 +2,16 @@ import { getDataSource } from "@/utils/typeorm/client";
 import { notFound } from "next/navigation";
 import { Video } from "@/utils/typeorm/entity/video.entity";
 import { getPublicUrl } from "@/utils/storage/client";
-import Image from "next/image";
 import VideoPlayer from "@/modules/watch/player";
-import { Download, ThumbsDown, ThumbsUp, User } from "lucide-react";
-import Link from "next/link";
 import SideVideos from "@/modules/shared/side-videos/videos";
-import { FormEvent } from "react";
 import PostComment from "@/modules/shared/comments/post-comment";
 import VideoActions from "@/modules/shared/videos/video-actions";
 import Description from "@/modules/shared/videos/description";
+import { createClient } from "@/utils/supabase/server";
+import { Reaction, ReactionType } from "@/utils/typeorm/entity/reaction.entity";
+import { videoView } from "@/modules/shared/videos/actions";
+import { Subscription } from "@/utils/typeorm/entity/subscription.entity";
+import { Suspense } from "react";
 
 interface WatchPageProps {
   params: Promise<{
@@ -30,11 +31,49 @@ export default async function WatchPage({ params }: WatchPageProps) {
     },
     relations: {
       channel: true,
+      reactions: true,
     },
   });
 
   if (!existingVideo) {
     return notFound();
+  }
+
+  videoView({ videoId: Number(videoId) });
+
+  let reactionPromise: Promise<ReactionType | null> = Promise.resolve(null);
+  let subscriptionPromise: Promise<number | null> = Promise.resolve(null);
+
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+
+  if (data.user) {
+    const [reactionsRepository, subscriptionsRepository] = await Promise.all([
+      dataSource.getRepository(Reaction),
+      dataSource.getRepository(Subscription),
+    ]);
+
+    reactionPromise = reactionsRepository
+      .findOne({
+        where: {
+          video: {
+            id: Number(videoId),
+          },
+          user_id: data.user.id,
+        },
+      })
+      .then((reaction) => reaction?.type ?? null);
+
+    subscriptionPromise = subscriptionsRepository
+      .findOne({
+        where: {
+          channel: {
+            id: Number(existingVideo.channel.id),
+          },
+          user_id: data.user.id,
+        },
+      })
+      .then((result) => result?.id ?? null);
   }
 
   const path = `channel_${existingVideo.channel.id}/videos/${encodeURIComponent(
@@ -52,22 +91,26 @@ export default async function WatchPage({ params }: WatchPageProps) {
     .createQueryBuilder("video")
     .leftJoinAndSelect("video.channel", "channel");
 
-  const videos = await baseQuery.getMany();
+  const videos = baseQuery.getMany();
 
-  const items = videos.map((video) => {
-    const path = `channel_${video.channel.id}/thumbnails/${encodeURIComponent(
-      video.thumbnail_name
-    )}`;
+  const itemsPromise = videos.then(async (videos) => {
+    const items = videos.map((video) => {
+      const path = `channel_${video.channel.id}/thumbnails/${encodeURIComponent(
+        video.thumbnail_name
+      )}`;
 
-    return {
-      thumbnail: getPublicUrl(path),
-      id: video.id,
-      title: video.title,
-      views: video.view_count,
-      duration: video.duration,
-      date: new Date(video.created_at).toLocaleDateString(),
-      channel: video.channel,
-    };
+      return {
+        thumbnail: getPublicUrl(path),
+        id: video.id,
+        title: video.title,
+        views: video.view_count,
+        duration: video.duration,
+        date: new Date(video.created_at).toLocaleDateString(),
+        channel: video.channel,
+      };
+    });
+
+    return items;
   });
 
   const video = structuredClone(existingVideo);
@@ -78,12 +121,27 @@ export default async function WatchPage({ params }: WatchPageProps) {
         <VideoPlayer className="max-h-[500px] rounded-md" videoUrl={videoUrl} />
         <div className="flex flex-col gap-4">
           <h2 className="text-2xl font-bold mt-2">{existingVideo.title}</h2>
-          <VideoActions video={video} videoUrl={videoUrl} />
-          <Description video={existingVideo} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <VideoActions
+              video={video}
+              videoUrl={videoUrl}
+              reactionPromise={reactionPromise}
+              subscriptionPromise={subscriptionPromise}
+            />
+          </Suspense>
+          <Description
+            video={{
+              created_at: existingVideo.created_at,
+              description: existingVideo.description,
+              view_count: existingVideo.view_count,
+            }}
+          />
           <PostComment />
         </div>
       </div>
-      <SideVideos items={items} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <SideVideos itemsPromise={itemsPromise} />
+      </Suspense>
     </div>
   );
 }

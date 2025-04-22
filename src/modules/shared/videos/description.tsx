@@ -1,6 +1,10 @@
 import { Video } from "@/utils/typeorm/entity/video.entity";
 
-export default function Description({ video }: { video: Video }) {
+export default function Description({
+  video,
+}: {
+  video: Pick<Video, "view_count" | "created_at" | "description">;
+}) {
   return (
     <div className="bg-neutral-700 rounded-lg p-2">
       <div className="font-bold flex gap-4">

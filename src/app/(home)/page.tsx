@@ -53,7 +53,7 @@ export default async function Home({
   return (
     <div className="grid gap-y-10 overflow-hidden px-2">
       <Categories />
-      <Videos items={items} />
+      <Videos items={items} size="md" />
     </div>
   );
 }

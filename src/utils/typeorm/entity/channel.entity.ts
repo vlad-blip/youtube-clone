@@ -1,41 +1,29 @@
-import {
-  Column,
-  PrimaryGeneratedColumn,
-  Entity,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  type Relation,
-} from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, type Relation } from "typeorm";
 
 import { Video } from "./video.entity";
+import { Base } from "./_base.entity";
+import { Subscription } from "./subscription.entity";
 
 @Entity()
-export class Channel {
-  @PrimaryGeneratedColumn({ type: "int8" })
-  readonly id: number;
-
+export class Channel extends Base {
   @Column()
   title: string;
 
   @Column({ nullable: true })
   channel_image_filename: string;
 
-  @CreateDateColumn()
-  readonly created_at: Date;
-
-  @UpdateDateColumn()
-  readonly updated_at: Date;
-
   @Column({ type: "uuid" })
   user: string;
 
-  @Column({ type: "int8", default: 0 })
+  @Column({ default: 0 })
   subscriber_count: number;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
   @OneToMany(() => Video, (video) => video.channel)
   videos: Relation<Video[]>;
+
+  @ManyToOne(() => Subscription, (subscription) => subscription.channel)
+  subscriptions: Relation<Subscription[]>;
 }
