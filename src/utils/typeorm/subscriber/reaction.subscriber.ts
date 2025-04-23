@@ -20,7 +20,7 @@ export class ReactionSubscriber implements EntitySubscriberInterface<Reaction> {
 
     await event.manager.increment(
       Video,
-      event.entity.video.id,
+      { id: event.entity.video.id },
       ReactionColumn[event.entity.type],
       1
     );
@@ -31,7 +31,7 @@ export class ReactionSubscriber implements EntitySubscriberInterface<Reaction> {
 
     await event.manager.decrement(
       Video,
-      event.entity.video.id,
+      { id: event.entity.video.id },
       ReactionColumn[event.entity.type],
       1
     );

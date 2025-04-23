@@ -24,7 +24,7 @@ export class SubscriptionSubscriber
   }
 
   async afterRemove(event: RemoveEvent<Subscription>): Promise<void> {
-    if (!event.entity) return;
+    if (!event.entity?.channel) return;
 
     await event.manager.decrement(
       Channel,

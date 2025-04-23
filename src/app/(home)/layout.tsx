@@ -13,12 +13,10 @@ export default async function HomeLayout({
 }>) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.getUser();
-
-  console.log("supabase getUser", { data, error });
+  const { data } = await supabase.auth.getUser();
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <div className="flex justify-between items-center px-4 py-2">
         <Link href={"/"}>
           <Image src={"/logo.svg"} alt="Youtube logo" width={40} height={40} />
@@ -34,7 +32,7 @@ export default async function HomeLayout({
           {data ? <UserButton /> : <AuthButton />}
         </div>
       </div>
-      <div className="grid  grid-cols-[0.1fr_1fr]">
+      <div className="grid  grid-cols-[0.1fr_1fr] min-h-full grow">
         <SideBar />
         {children}
       </div>

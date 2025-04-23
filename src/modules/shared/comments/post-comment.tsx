@@ -18,7 +18,7 @@ export default function PostComment() {
   }
 
   return (
-    <form className="py-4" onSubmit={submitHandler}>
+    <form onSubmit={submitHandler}>
       <div className="flex flex-col gap-4">
         <div className="flex gap-4 items-center">
           <User />

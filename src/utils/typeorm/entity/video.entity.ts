@@ -12,6 +12,7 @@ import { Channel } from "./channel.entity";
 import { Category } from "./category.entity";
 import { Reaction } from "./reaction.entity";
 import { Base } from "./_base.entity";
+import { Comment } from "./comment.entity";
 
 export enum VideoType {
   VIDEO = "video",
@@ -62,4 +63,7 @@ export class Video extends Base {
 
   @OneToMany(() => Reaction, (reaction) => reaction.video, { nullable: true })
   reactions: Relation<Reaction[]>;
+
+  @OneToMany(() => Comment, (comment) => comment.video)
+  comments: Relation<Comment[]>;
 }

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Video(props: IVideo & { className?: string }) {
   return (
-    <Link href={`/watch/${props.id}`}>
+    <Link href={`/watch/${props.id}`} prefetch={true}>
       <div
         className={`${props.className} hover:bg-neutral-800 group p-2 transition-all duration-700`}
       >

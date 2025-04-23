@@ -12,11 +12,37 @@ import { Reaction, ReactionType } from "@/utils/typeorm/entity/reaction.entity";
 import { videoView } from "@/modules/shared/videos/actions";
 import { Subscription } from "@/utils/typeorm/entity/subscription.entity";
 import { Suspense } from "react";
+import Comments from "@/modules/shared/comments/comments";
+import CommentsSection from "@/modules/home/ui/sections/comments-section";
+import { Comment } from "@/utils/typeorm/entity/comment.entity";
+import { User } from "@supabase/supabase-js";
 
 interface WatchPageProps {
   params: Promise<{
     videoId: string;
   }>;
+}
+
+export async function generateMetadata({ params }: WatchPageProps) {
+  const { videoId } = await params;
+
+  const dataSource = await getDataSource();
+  const videoRepository = await dataSource.getRepository(Video);
+
+  const existingVideo = await videoRepository.findOne({
+    where: {
+      id: Number(videoId),
+    },
+    select: {
+      title: true,
+    },
+  });
+
+  if (!existingVideo) return null;
+
+  return {
+    title: existingVideo.title,
+  };
 }
 
 export default async function WatchPage({ params }: WatchPageProps) {
@@ -115,6 +141,35 @@ export default async function WatchPage({ params }: WatchPageProps) {
 
   const video = structuredClone(existingVideo);
 
+  const DUMMY_COMMENTS: (Pick<Comment, "content" | "created_at" | "id"> & {
+    profle: { name: string };
+  })[] = [
+    {
+      content: "test content",
+      profle: {
+        name: "Test name",
+      },
+      created_at: new Date(),
+      id: 1,
+    },
+    {
+      content: "test content 2",
+      profle: {
+        name: "Test name 2",
+      },
+      created_at: new Date(),
+      id: 2,
+    },
+    {
+      content: "test content 3",
+      profle: {
+        name: "Test name 3",
+      },
+      created_at: new Date(),
+      id: 3,
+    },
+  ];
+
   return (
     <div className="grid grid-cols-[1fr_0.4fr] gap-4">
       <div>
@@ -136,7 +191,7 @@ export default async function WatchPage({ params }: WatchPageProps) {
               view_count: existingVideo.view_count,
             }}
           />
-          <PostComment />
+          <CommentsSection commentsCount={12032} items={DUMMY_COMMENTS} />
         </div>
       </div>
       <Suspense fallback={<div>Loading...</div>}>

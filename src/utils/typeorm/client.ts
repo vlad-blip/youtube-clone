@@ -12,12 +12,13 @@ import { ReactionSubscriber } from "./subscriber/reaction.subscriber";
 import { ViewSubscriber } from "./subscriber/view.subscriber";
 import { Subscription } from "./entity/subscription.entity";
 import { SubscriptionSubscriber } from "./subscriber/subscription.subscriber";
+import { Comment } from "./entity/comment.entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DATABASE_URL,
   synchronize: process.env.NODE_ENV === "development",
-  entities: [Video, Channel, Category, Reaction, View, Subscription],
+  entities: [Video, Channel, Category, Reaction, View, Subscription, Comment],
   subscribers: [ReactionSubscriber, ViewSubscriber, SubscriptionSubscriber],
   migrations: [],
 });
